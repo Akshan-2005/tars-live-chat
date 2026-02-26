@@ -16,9 +16,11 @@ import { api } from "@/convex/_generated/api";
 import { useUser } from "@clerk/nextjs";
 import ConversationsList from "@/components/ConversationsList";
 import ThemeToggle from "@/components/ThemeToggle";
+import ChatHeader from "@/components/ChatHeader";
 
 export default function Home() {
   const markAsRead = useMutation(api.conversations.markAsRead);
+  const createUser = useMutation(api.users.createUser);
   const { user } = useUser();
   const updatePresence = useMutation(api.users.updatePresence);
   const [open, setOpen] = useState(false);
@@ -58,6 +60,17 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [user]);
 
+  useEffect(() => {
+    if (!user) return;
+
+    createUser({
+      clerkId: user.id,
+      name: user.fullName ?? "User",
+      email: user.primaryEmailAddress?.emailAddress ?? "",
+      image: user.imageUrl,
+    });
+  }, [user]);
+
   return (
     <main className="h-full w-full flex overflow-hidden">
       <SignedOut>
@@ -73,19 +86,18 @@ export default function Home() {
             }`}
         >
           <div className="flex flex-col h-full">
-            <div className="p-4 font-bold border-b dark:border-gray-700">Users</div>
+            <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+              <span className="font-semibold text-lg">Chats</span>
 
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+                <UserButton afterSignOutUrl="/" />
+              </div>
+            </div>
             <div className="flex-1 overflow-y-auto p-2">
-              {/* Search & start new chat */}
-              <UsersList onSelect={openChat} />
-
-              {/* Existing conversations */}
               <ConversationsList
                 activeId={activeConversation}
-                onSelect={(id) => {
-                  openConversation(id);
-                  setOpen(false);
-                }}
+                onSelect={openConversation}
               />
             </div>
           </div>
@@ -110,15 +122,9 @@ export default function Home() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-2">
-            {/* Search users */}
-            <UsersList onSelect={openChat} />
-
-            {/* Conversations */}
             <ConversationsList
               activeId={activeConversation}
-              onSelect={(id) => {
-                openConversation(id);
-              }}
+              onSelect={openConversation}
             />
           </div>
         </div>
@@ -127,6 +133,7 @@ export default function Home() {
         <div className="flex-1 flex flex-col relative bg-gray-50 dark:bg-gray-950 min-h-0">
           {/* MOBILE HEADER */}
           <div className="sm:hidden flex items-center gap-3 border-b dark:border-gray-700 p-3">
+
             {activeConversation ? (
               <button onClick={() => setActiveConversation(undefined)}>
                 ←
@@ -136,14 +143,29 @@ export default function Home() {
                 <Menu size={22} />
               </button>
             )}
-            <span className="font-semibold">Chats</span>
-            <div className="ml-auto">
+
+            {/* 👇 CHAT USER HEADER */}
+            {activeConversation ? (
+              <ChatHeader conversationId={activeConversation} />
+            ) : (
+              <span className="font-semibold">Chats</span>
+            )}
+
+            <div className="ml-auto flex items-center gap-2">
               <ThemeToggle />
+              <UserButton afterSignOutUrl="/" />
             </div>
+
           </div>
 
           {/* CHAT CONTENT */}
           <div className="flex-1 min-h-0 flex flex-col">
+            {/*desktop header*/}
+            {activeConversation && (
+              <div className="hidden sm:flex items-center px-4 py-3 border-b dark:border-gray-700 bg-white dark:bg-gray-900">
+                <ChatHeader conversationId={activeConversation} />
+              </div>
+            )}
             {activeConversation
               ? <ChatWindow conversationId={activeConversation} />
               : <div className="flex flex-1 items-center justify-center text-gray-400 dark:text-gray-500">
