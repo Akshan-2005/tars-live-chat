@@ -94,7 +94,8 @@ export default function Home() {
                 <UserButton afterSignOutUrl="/" />
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-2">
+            <div className="flex-1 overflow-y-auto p-2 space-y-3">
+              <UsersList onSelect={openChat} />
               <ConversationsList
                 activeId={activeConversation}
                 onSelect={openConversation}
@@ -122,6 +123,7 @@ export default function Home() {
           </div>
 
           <div className="flex-1 overflow-y-auto p-2">
+            <UsersList onSelect={openChat} />
             <ConversationsList
               activeId={activeConversation}
               onSelect={openConversation}
@@ -144,7 +146,7 @@ export default function Home() {
               </button>
             )}
 
-            {/* CHAT USER HEADER */}
+            {/* 👇 CHAT USER HEADER */}
             {activeConversation ? (
               <ChatHeader conversationId={activeConversation} />
             ) : (
