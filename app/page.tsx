@@ -37,6 +37,7 @@ export default function Home() {
     });
 
     await openConversation(convoId);
+    setOpen(false);
   }
 
   async function openConversation(id: Id<"conversations">) {
@@ -48,6 +49,8 @@ export default function Home() {
         userId: user.id
       })
     }
+
+    setOpen(false);
   }
 
   useEffect(() => {
