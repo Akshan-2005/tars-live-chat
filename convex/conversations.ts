@@ -8,19 +8,14 @@ export const getOrCreateConversation = mutation({
 
         const existing = await ctx.db
             .query("conversations")
-            .collect();
+            .filter(q =>
+                q.eq(q.field("members"), members)
+            )
+            .unique();
 
-        const found = existing.find(
-            (c) =>
-                c.members.length === 2 &&
-                c.members.sort().join() === members.join()
-        );
+        if (existing) return existing._id;
 
-        if (found) return found._id;
-
-        return await ctx.db.insert("conversations", {
-            members,
-        });
+        return await ctx.db.insert("conversations", { members });
     },
 });
 export const getUserConversations = query({
@@ -36,7 +31,7 @@ export const getUserConversations = query({
 
         const results = [];
 
-        for (const convo of conversations) {
+        for (const convo of userConversations) {
             // find the other user
             const otherUserId = convo.members.find(id => id !== args.userId);
             if (!otherUserId) continue;
