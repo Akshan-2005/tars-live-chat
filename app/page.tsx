@@ -91,7 +91,7 @@ export default function Home() {
 
               <div className="flex items-center gap-2">
                 <ThemeToggle />
-                <UserButton afterSignOutUrl="/" />
+                <UserButton />
               </div>
             </div>
             <div className="flex-1 overflow-y-auto p-2 space-y-3">
