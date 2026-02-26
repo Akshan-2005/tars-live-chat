@@ -146,7 +146,7 @@ export default function Home() {
               </button>
             )}
 
-            {/* 👇 CHAT USER HEADER */}
+            {/*CHAT USER HEADER */}
             {activeConversation ? (
               <ChatHeader conversationId={activeConversation} />
             ) : (
