@@ -14,16 +14,22 @@ export default function OneSignalInit() {
         appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID!,
       });
 
-      // wait until subscription becomes available
+      // ✅ get subscription ID directly
+      const playerId = OneSignal.User.PushSubscription.id;
+
+      if (playerId) {
+        await savePlayerId({ playerId });
+        console.log("Saved playerId:", playerId);
+      }
+
+      // ✅ also listen for future changes
       OneSignal.User.PushSubscription.addEventListener(
         "change",
         async () => {
-          const playerId =
-            OneSignal.User.PushSubscription.id;
-
-          if (playerId) {
-            await savePlayerId({ playerId });
-            console.log("Saved playerId:", playerId);
+          const id = OneSignal.User.PushSubscription.id;
+          if (id) {
+            await savePlayerId({ playerId: id });
+            console.log("Updated playerId:", id);
           }
         }
       );
