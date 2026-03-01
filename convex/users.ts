@@ -31,13 +31,13 @@ export const getUsers = query({
 })
 
 export const updatePresence = mutation({
-    args: {clerkId: v.string() },
+    args: { clerkId: v.string() },
     handler: async (ctx, args) => {
         const user = await ctx.db
             .query("users")
-            .withIndex("by_clerkId", q=> q.eq("clerkId", args.clerkId))
+            .withIndex("by_clerkId", q => q.eq("clerkId", args.clerkId))
             .unique();
-        
+
         if (!user) return;
 
         await ctx.db.patch(user._id, {
@@ -45,3 +45,22 @@ export const updatePresence = mutation({
         });
     },
 })
+
+export const savePlayerId = mutation({
+    args: { playerId: v.string() },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) return;
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_clerkId", q => q.eq("clerkId", identity.subject))
+            .unique();
+
+        if (!user) return;
+
+        await ctx.db.patch(user._id, {
+            playerId: args.playerId,
+        });
+    },
+});

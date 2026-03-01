@@ -8,7 +8,7 @@ import { useState, useRef, useEffect } from "react";
 import { formatMessageTime } from "@/lib/formatTime";
 
 export default function ChatWindow({
-    conversationId,
+    conversationId
 }: {
     conversationId: Id<"conversations">;
 }) {
@@ -112,7 +112,7 @@ export default function ChatWindow({
                             className={`flex w-full items-end ${isMine ? "justify-end" : "justify-start"}`}
                         >
                             <div
-                                className={` inline-block max-w-[75%] px-3 py-2 rounded-2xl text-sm break-words ${isMine
+                                className={` inline-block max-w-[75%] px-3 py-2 rounded-2xl text-sm wrap-break-word ${isMine
                                     ? "bg-blue-500 text-white"
                                     : "bg-gray-200 dark:bg-gray-700 dark:text-gray-100"
                                     }`}

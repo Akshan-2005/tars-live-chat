@@ -2,6 +2,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ConvexClientProvider } from "@/lib/convex-provider";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import OneSignalInit from "@/components/OneSignalInit";
 
 export const metadata = {
   title: "Live Chat App",
@@ -19,6 +20,7 @@ export default function RootLayout({
         <ClerkProvider>
           <ConvexClientProvider>
             <ThemeProvider>
+              <OneSignalInit />
               <main className="h-full bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
                 {children}
               </main>
