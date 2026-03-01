@@ -9,24 +9,28 @@ export default function OneSignalInit() {
   const savePlayerId = useMutation(api.users.savePlayerId);
 
   useEffect(() => {
-    OneSignal.init({
-      appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID!,
-      allowLocalhostAsSecureOrigin: true,
-    });
+    async function init() {
+      await OneSignal.init({
+        appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID!,
+      });
 
-    // Runs when user allows notifications
-    OneSignal.User.PushSubscription.addEventListener(
-      "change",
-      async () => {
-        const playerId =
-          OneSignal.User.PushSubscription.id;
+      // SHOW PERMISSION PROMPT
+      const permission = await OneSignal.Notifications.permission;
 
-        if (playerId) {
-          await savePlayerId({ playerId });
-          console.log("Saved playerId:", playerId);
-        }
+      if (!permission) {
+        await OneSignal.Notifications.requestPermission();
       }
-    );
+
+      // save player ID
+      const playerId = OneSignal.User.PushSubscription.id;
+
+      if (playerId) {
+        await savePlayerId({ playerId });
+        console.log("Saved playerId:", playerId);
+      }
+    }
+
+    init();
   }, []);
 
   return null;
