@@ -11,7 +11,7 @@ export const sendPush = action({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Basic ${process.env.NEXT_PUBLIC_ONESIGNAL_REST_KEY}`,
+        Authorization: `Basic ${process.env.ONESIGNAL_REST_KEY}`,
       },
       body: JSON.stringify({
         app_id: process.env.ONESIGNAL_APP_ID,

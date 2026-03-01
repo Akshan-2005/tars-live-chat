@@ -14,20 +14,19 @@ export default function OneSignalInit() {
         appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID!,
       });
 
-      // SHOW PERMISSION PROMPT
-      const permission = await OneSignal.Notifications.permission;
+      // wait until subscription becomes available
+      OneSignal.User.PushSubscription.addEventListener(
+        "change",
+        async () => {
+          const playerId =
+            OneSignal.User.PushSubscription.id;
 
-      if (!permission) {
-        await OneSignal.Notifications.requestPermission();
-      }
-
-      // save player ID
-      const playerId = OneSignal.User.PushSubscription.id;
-
-      if (playerId) {
-        await savePlayerId({ playerId });
-        console.log("Saved playerId:", playerId);
-      }
+          if (playerId) {
+            await savePlayerId({ playerId });
+            console.log("Saved playerId:", playerId);
+          }
+        }
+      );
     }
 
     init();
