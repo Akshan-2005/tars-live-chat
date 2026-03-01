@@ -54,13 +54,17 @@ export const savePlayerId = mutation({
 
         const user = await ctx.db
             .query("users")
-            .withIndex("by_clerkId", q => q.eq("clerkId", identity.subject))
-            .unique();
+            .filter(q => q.eq(q.field("clerkId"), identity.subject))
+            .first();
+
+        console.log("FOUND USER:", user);
 
         if (!user) return;
 
         await ctx.db.patch(user._id, {
             playerId: args.playerId,
         });
+
+        console.log("PLAYER ID SAVED")
     },
 });
